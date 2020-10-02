@@ -110,14 +110,14 @@ class Tool(benchexec.tools.template.BaseTool):
         #If identifier is the input source file path+name, this will create
         # links in the output table for bpl, bc, and witness related files
         ret = ""
-        ret += '<div align="center">\n'
-        ret += '  <select onChange="window.location.href=this.value">\n'
-        ret += '    <option value=""></option>\n'
-        ret += '    <option value="' + identifier + '.bc">.bc</option>\n'
-        ret += '    <option value="' + identifier + '.bpl">.bpl</option>\n'
-        ret += '    <option value="' + identifier + '.witness.graphml" hidden>Witness Graphml</option>\n'
-        ret += '    <option value="' + identifier + '.witnessCheckOutput" hidden>Checker Console</option>\n'
-        ret += '    <option value="' + identifier + 'output.log" hidden>Checker Log</option>\n'
-        ret += '  </select>\n'
-        ret += '</div>\n'
+#        ret += '<div align="center">\n'
+#        ret += '  <select onChange="window.location.href=this.value">\n'
+#        ret += '    <option value=""></option>\n'
+#        ret += '    <option value="' + identifier + '.bc">.bc</option>\n'
+#        ret += '    <option value="' + identifier + '.bpl">.bpl</option>\n'
+#        ret += '    <option value="' + identifier + '.witness.graphml" hidden>Witness Graphml</option>\n'
+#        ret += '    <option value="' + identifier + '.witnessCheckOutput" hidden>Checker Console</option>\n'
+#        ret += '    <option value="' + identifier + 'output.log" hidden>Checker Log</option>\n'
+#        ret += '  </select>\n'
+#        ret += '</div>\n'
         return ret
