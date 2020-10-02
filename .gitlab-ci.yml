@@ -1,3 +1,10 @@
+# This file is part of BenchExec, a framework for reliable benchmarking:
+# https://github.com/sosy-lab/benchexec
+#
+# SPDX-FileCopyrightText: 2007-2020 Dirk Beyer <https://www.sosy-lab.org>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # To execute a job locally, install gitlab-runner (https://docs.gitlab.com/runner/install/)
 # and run the following command:
 # gitlab-runner exec docker --docker-privileged --docker-volumes /sys/fs/cgroup:/sys/fs/cgroup:rw --env CI_REGISTRY_IMAGE=registry.gitlab.com/sosy-lab/software/benchexec <<JOB_NAME>>
@@ -40,16 +47,6 @@ stages:
     paths:
       - coverage.xml
 
-unit-tests:python-2.7:
-  <<: *unit-tests
-  variables:
-    PYTHON_VERSION: '2.7'
-
-unit-tests:python-3.4:
-  <<: *unit-tests
-  variables:
-    PYTHON_VERSION: '3.4'
-
 unit-tests:python-3.5:
   <<: *unit-tests
   variables:
@@ -64,6 +61,11 @@ unit-tests:python-3.7:
   <<: *unit-tests
   variables:
     PYTHON_VERSION: '3.7'
+
+unit-tests:python-3.8:
+  <<: *unit-tests
+  variables:
+    PYTHON_VERSION: '3.8'
 
 deploy-coverage:
   stage: deploy
@@ -96,10 +98,67 @@ flake8:
   stage: test
   image: python:3.7
   before_script:
+    - pip install 'isort<5' # workaround for https://github.com/gforcada/flake8-isort/issues/88
     - pip install flake8-awesome
   script:
     - flake8
-  allow_failure: true # need to fix existing code first
+
+
+# For HTML tables, test that bundled files are uptodate
+javascript-build:
+  stage: test
+  image: node:lts
+  before_script:
+    - cd benchexec/tablegenerator/react-table
+    - npm install
+    - npm rebuild node-sass
+  script:
+    - npm run build
+    - git diff --stat --exit-code
+  artifacts:
+    paths:
+      - benchexec/tablegenerator/react-table/build
+    when: on_failure
+  cache:
+    key: "$CI_JOB_NAME"
+    paths:
+      - "benchexec/tablegenerator/react-table/node_modules"
+
+javascript-tests:
+  stage: test
+  image: node:lts
+  before_script:
+    - cd benchexec/tablegenerator/react-table
+    - npm install
+  script:
+    - npm run test
+  cache:
+    key: "$CI_JOB_NAME"
+    paths:
+      - "benchexec/tablegenerator/react-table/node_modules"
+
+javascript-eslint:
+  stage: test
+  image: node:lts
+  before_script:
+    - cd benchexec/tablegenerator/react-table
+    - npm install
+  script:
+    - npm run lint
+  cache:
+    key: "$CI_JOB_NAME"
+    paths:
+      - "benchexec/tablegenerator/react-table/node_modules"
+
+
+# check license declarations etc.
+reuse:
+  stage: test
+  image:
+    name: fsfe/reuse:latest
+    entrypoint: [""]
+  script:
+    - reuse lint
 
 
 # Build Docker images
@@ -116,18 +175,6 @@ flake8:
   only:
     - schedules
     - web
-
-build-docker:test:python-2.7:
-  extends: .build-docker
-  variables:
-    DOCKERFILE: test/Dockerfile.python-2.7
-    IMAGE: test:python-2.7
-
-build-docker:test:python-3.4:
-  extends: .build-docker
-  variables:
-    DOCKERFILE: test/Dockerfile.python-3.4
-    IMAGE: test:python-3.4
 
 build-docker:test:python-3.5:
   extends: .build-docker
@@ -146,3 +193,9 @@ build-docker:test:python-3.7:
   variables:
     DOCKERFILE: test/Dockerfile.python-3.7
     IMAGE: test:python-3.7
+
+build-docker:test:python-3.8:
+  extends: .build-docker
+  variables:
+    DOCKERFILE: test/Dockerfile.python-3.8
+    IMAGE: test:python-3.8

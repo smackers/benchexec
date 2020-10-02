@@ -1,3 +1,12 @@
+<!--
+This file is part of BenchExec, a framework for reliable benchmarking:
+https://github.com/sosy-lab/benchexec
+
+SPDX-FileCopyrightText: 2007-2020 Dirk Beyer <https://www.sosy-lab.org>
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # BenchExec: Container Mode
 
 The container mode isolates the benchmarked process from other processes on the same system,
@@ -150,7 +159,7 @@ to select only a subset of created files to be copied:
   will start at the root of the filesystem.
 - Relative patterns that traverse upwards out of the working directory (e.g., `..`) are not allowed.
 - The shell wildcards `?` and `*` are supported,
-  and if you use Python 3.5 or newer also the recursive wildcard `**`.
+  and also the recursive wildcard `**`.
 - If a directory is matched by the pattern, all files in the directory will be copied recursively.
 - Only regular files are copied; symlinks, empty directories, etc. are ignored.
 

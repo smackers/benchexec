@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# This file is part of BenchExec, a framework for reliable benchmarking:
+# https://github.com/sosy-lab/benchexec
+#
+# SPDX-FileCopyrightText: 2007-2020 Dirk Beyer <https://www.sosy-lab.org>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
 if [ -z "$1" ]; then
@@ -17,7 +24,7 @@ if [ "$VERSION" = "$OLD_VERSION" ]; then
   echo "Version already exists."
   exit 1
 fi
-if ! grep -q "BenchExec $VERSION" CHANGELOG.md; then
+if ! grep -q "^#* *BenchExec $VERSION" CHANGELOG.md; then
   echo "Cannot release version without changelog, please update CHANGELOG.md"
   exit 1
 fi
@@ -64,28 +71,13 @@ virtualenv -p /usr/bin/python3 "$TEMP3"
 git clone "file://$DIR" "$TEMP3/benchexec"
 pushd "$TEMP3/benchexec"
 pip install -e "."
-pip install 'wheel>=0.31.0' 'setuptools>=38.6.0'
+pip install 'wheel>=0.32.0' 'setuptools>=42.0.0'
 python setup.py nosetests
-python setup.py sdist bdist_egg bdist_wheel
+python setup.py sdist bdist_wheel
 popd
 deactivate
 cp "$TEMP3/benchexec/dist/"* "$DIST_DIR"
 rm -rf "$TEMP3"
-
-# Test and build under Python 2
-TEMP2="$(mktemp -d)"
-virtualenv -p /usr/bin/python2 "$TEMP2"
-. "$TEMP2/bin/activate"
-git clone "file://$DIR" "$TEMP2/benchexec"
-pushd "$TEMP2/benchexec"
-pip install -e "."
-pip install 'setuptools>=38.6.0'
-python setup.py test
-python setup.py bdist_egg
-popd
-deactivate
-cp "$TEMP2/benchexec/dist/"* "$DIST_DIR"
-rm -rf "$TEMP2"
 
 
 # Build Debian package
@@ -108,7 +100,7 @@ rm -rf "$TEMP_DEB"
 for f in "$DIST_DIR/"*; do
   gpg --detach-sign -a "$f"
 done
-git tag -s "$VERSION" -m "Relase $VERSION"
+git tag -s "$VERSION" -m "Release $VERSION"
 
 
 # Upload and finish

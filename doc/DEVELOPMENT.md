@@ -1,3 +1,12 @@
+<!--
+This file is part of BenchExec, a framework for reliable benchmarking:
+https://github.com/sosy-lab/benchexec
+
+SPDX-FileCopyrightText: 2007-2020 Dirk Beyer <https://www.sosy-lab.org>
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # BenchExec: Development Reference
 
 This file contains documentation that is only relevant for developers
@@ -6,14 +15,15 @@ and maintainers of BenchExec.
 For writing a tool-info module, please refer to the documentation on
 [Tool Integration](tool-integration.md).
 
+Development documentation of our React-based project for interactive HTML tables
+is in the respective [README](../benchexec/tablegenerator/react-table/README.md).
+
 
 ## Installation for Development
 
 After cloning the [GitHub repository](https://github.com/sosy-lab/benchexec),
 BenchExec can be used directly from within the working directory.
 Scripts for starting the three programs are available in the `bin` directory.
-For `table-generator`, the [Python package Tempita](https://pypi.python.org/pypi/Tempita)
-needs to be installed on the system.
 
 The alternative (recommended) way is to create a virtual Python environment
 and to install BenchExec in development mode within this environment:
@@ -42,9 +52,6 @@ Apart from what is formatted automatically,
 we try to follow the official Python style guide [PEP8](https://www.python.org/dev/peps/pep-0008/).
 
 We also check our code using the static-analysis tool [flake8](http://flake8.pycqa.org).
-The CI check for this is currently not enforced because there are too many existing warnings.
-Please check manually that you do not introduce new warnings,
-and clean up existing warnings.
 If you find a rule that should not be enforced in your opinion,
 please raise an issue.
 
@@ -74,17 +81,9 @@ please raise an issue.
  * In a clean checkout and in a virtual environment with Python 3 (as described above),
    create the release archives:
 
-        python3 setup.py sdist bdist_egg bdist_wheel
+        python3 setup.py sdist bdist_wheel
 
- * In a clean checkout and in a virtual environment with Python **2**,
-   create the release archive with only runexec for Python 2:
-
-        python2 setup.py bdist_egg
-
- * Copy the `dist/*.egg` file created with Python 2 into the `dist` directory
-   of the Python 3 build.
-
- * Sign the files and upload them to PyPi inside the Python 3 build directory:
+ * Sign the files and upload them to PyPi inside the build directory:
 
         twine upload -s dist/*
 
